@@ -29,6 +29,37 @@ void draw_floor() {
   SDL_RenderFillRect(renderer, &rect);
 }
 
+void showWelcomeScreen() {
+  SDL_RenderClear(renderer);
+  const std::string WELCOME_IMAGE_KEY = "welcome_image";
+
+  ImageLoader::loadImage(WELCOME_IMAGE_KEY, "assets/welcome.png");
+  ImageLoader::render(renderer, WELCOME_IMAGE_KEY, 0, 0);
+
+  SDL_RenderPresent(renderer);
+
+  bool choosingMap = true;
+  std::string selectedMap;  // This will store the chosen map
+
+  while (choosingMap) {
+    SDL_Event event;
+    if (SDL_PollEvent(&event)) {
+      if (event.type == SDL_KEYDOWN) {
+        switch (event.key.keysym.sym) {
+          case SDLK_a:
+            selectedMap = "map.txt"; // Set the map for option A
+            choosingMap = false; // Exit the loop
+            break;
+          case SDLK_b:
+            selectedMap = "mapB.txt"; // Set the map for option B
+            choosingMap = false; // Exit the loop
+            break;
+        }
+      }
+    }
+  }
+}
+
 int main() {
 
   SDL_Init(SDL_INIT_VIDEO);
@@ -49,6 +80,7 @@ int main() {
   r.load_map("assets/map.txt");
 
   std::thread musicThread(backgroundMusic);
+  showWelcomeScreen();
 
   bool running = true;
   int speed = 10;
