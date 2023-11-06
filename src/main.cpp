@@ -2,10 +2,12 @@
 #include <SDL_events.h>
 #include <SDL_render.h>
 #include <SDL_video.h>
+#include <thread>
 
 #include "color.h"
 #include "imageloader.h"
 #include "raycaster.h"
+#include "music.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -17,7 +19,7 @@ void clear() {
 
 void draw_floor() {
   // floor color
-  SDL_SetRenderDrawColor(renderer, 112, 122, 122, 255);
+  SDL_SetRenderDrawColor(renderer, 78, 163, 54, 255);
   SDL_Rect rect = {
     SCREEN_WIDTH, 
     SCREEN_HEIGHT / 2,
@@ -31,6 +33,8 @@ int main() {
 
   SDL_Init(SDL_INIT_VIDEO);
   ImageLoader::init();
+  Uint32 lastTime = SDL_GetTicks();
+  int frameCount = 0;
 
   window = SDL_CreateWindow("DOOM", 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -43,6 +47,8 @@ int main() {
 
   Raycaster r = { renderer };
   r.load_map("assets/map.txt");
+
+  std::thread musicThread(backgroundMusic);
 
   bool running = true;
   int speed = 10;
@@ -62,16 +68,22 @@ int main() {
             r.player.a -= 3.14/24;
             break;
           case SDLK_UP:
-            r.player.x += speed * cos(r.player.a);
-            r.player.y += speed * sin(r.player.a);
-            break;
-          case SDLK_DOWN:
             r.player.x -= speed * cos(r.player.a);
             r.player.y -= speed * sin(r.player.a);
             break;
-           default:
+          case SDLK_DOWN:
+            r.player.x += speed * cos(r.player.a);
+            r.player.y += speed * sin(r.player.a);
             break;
-        }
+            default:
+            break;
+          }
+      }
+
+      if (event.type == SDL_MOUSEMOTION) {
+        int mouseX = event.motion.x;
+        const float sensitivity = 0.02f;
+        r.player.a -= static_cast<float>(mouseX) * sensitivity;
       }
     }
 
@@ -80,7 +92,16 @@ int main() {
 
     r.render();
 
-    // render
+    frameCount++;
+    Uint32 currentTime = SDL_GetTicks();
+    Uint32 elapsedTime = currentTime - lastTime;
+    if (elapsedTime >= 1000) {
+      int fps = frameCount * 1000 / elapsedTime;
+      std::string title = "Raycasting - FPS: " + std::to_string(fps);
+      SDL_SetWindowTitle(window, title.c_str());
+      frameCount = 0;
+      lastTime = currentTime;
+    }
 
     SDL_RenderPresent(renderer);
   }

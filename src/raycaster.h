@@ -169,10 +169,23 @@ public:
       draw_stake(x, h, impact);
     }
 
+    //left side corner map position
+    /*for (int x = 0; x < SCREEN_WIDTH / 3; x += BLOCK / 3) {
+        for (int y = 0; y < SCREEN_HEIGHT / 3; y += BLOCK / 3) {
+            int i = x / (BLOCK / 3);
+            int j = y / (BLOCK / 3);
+            if (j < map.size() && i < map[j].size() &&
+                map[j][i] != ' ' && map[j][i] != '.') {
+                std::string mapHit;
+                mapHit = map[j][i];
+                rect(x, y, mapHit);
+            }
+        }
+    }*/
   }
 
   Player player;
-private:
+  private:
   int scale;
   SDL_Renderer* renderer;
   std::vector<std::string> map;
