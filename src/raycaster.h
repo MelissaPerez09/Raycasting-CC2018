@@ -36,8 +36,14 @@ struct Impact {
   int tx;
 };
 
+struct Point {
+  int x;
+  int y;
+};
+
 class Raycaster {
-public:
+  public:
+  std::vector<std::string> map;
   Raycaster(SDL_Renderer* renderer)
     : renderer(renderer) {
 
@@ -128,6 +134,24 @@ public:
       SDL_RenderDrawPoint(renderer, x, y);
     }
   } 
+
+  bool checkWin() {
+        int player_x = static_cast<int>(player.x / BLOCK);
+        int player_y = static_cast<int>(player.y / BLOCK);
+
+        // Comprueba si el jugador está en una posición de victoria ('y' en el mapa)
+        if (map[player_y][player_x] == 'g') {
+            return true;
+        }
+
+        return false;
+    }
+
+  bool collision(int x, int y) {
+    int i = x / BLOCK;
+    int j = y / BLOCK;
+    return map[j][i] != ' ';
+  }
  
   void render() {
     
@@ -188,6 +212,5 @@ public:
   private:
   int scale;
   SDL_Renderer* renderer;
-  std::vector<std::string> map;
   int tsize;
 };
