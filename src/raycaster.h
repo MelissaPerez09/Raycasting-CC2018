@@ -16,8 +16,10 @@
 const Color B = {0, 0, 0};
 const Color W = {255, 255, 255};
 
-const int WIDTH = 8;
-const int HEIGHT = 10;
+//const int WIDTH = 8;
+//const int HEIGHT = 10;
+const int WIDTH = 16;
+const int HEIGHT = 11;
 const int BLOCK = 50;
 const int SCREEN_WIDTH = WIDTH * BLOCK;
 const int SCREEN_HEIGHT = HEIGHT * BLOCK;
@@ -37,6 +39,11 @@ struct Impact {
 };
 
 struct Point {
+  int x;
+  int y;
+};
+
+struct Coordinate {
   int x;
   int y;
 };
@@ -82,6 +89,23 @@ class Raycaster {
         SDL_RenderDrawPoint(renderer, cx, cy);
       }
     }
+  }
+
+  void render_player() {
+    // Calculate the position for rendering the player's sprite on the right side
+    int rightX = SCREEN_WIDTH + SCREEN_WIDTH / 2; // Center of the right side
+    int rightY = SCREEN_HEIGHT / 2; // Center of the screen
+    int spriteSize = 128; // Adjust the size as needed
+
+    // Calculate the player's view angle and adjust the sprite angle accordingly
+    float spriteAngle = player.a;
+
+    // Adjust the sprite position based on the player's view
+    rightX += static_cast<int>(SCREEN_WIDTH / 4 * cos(spriteAngle));
+    rightY += static_cast<int>(SCREEN_HEIGHT / 4 * sin(spriteAngle));
+
+    // Render the sprite at the adjusted position and angle
+    ImageLoader::render(renderer, "p", rightX - spriteSize / 2, rightY - spriteSize / 2, spriteSize);
   }
 
   Impact cast_ray(float a) {
@@ -135,17 +159,24 @@ class Raycaster {
     }
   } 
 
-  bool checkWin() {
-        int player_x = static_cast<int>(player.x / BLOCK);
-        int player_y = static_cast<int>(player.y / BLOCK);
+  float PLAYER_RADIUS = 5.0f;
+  std::vector<Coordinate> gCoordinates;
 
-        // Comprueba si el jugador está en una posición de victoria ('y' en el mapa)
-        if (map[player_y][player_x] == 'g') {
+  bool checkWin() {
+    // Assuming you have a list of coordinates of all the 'g' characters
+    for (int i = 0; i < gCoordinates.size(); i++) {
+        int gx = gCoordinates.at(i).x;
+        int gy = gCoordinates.at(i).y;
+
+        // If the player is within the range of a 'g' character, return true
+        if (std::abs(player.x - gx) <= PLAYER_RADIUS && std::abs(player.y - gy) <= PLAYER_RADIUS) {
             return true;
         }
-
-        return false;
     }
+
+    // If no 'g' characters are found within the player's radius, return false
+    return false;
+}
 
   bool collision(int x, int y) {
     int i = x / BLOCK;

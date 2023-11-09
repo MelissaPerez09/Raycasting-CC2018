@@ -19,7 +19,7 @@ void clear() {
 
 void draw_floor() {
   // floor color
-  SDL_SetRenderDrawColor(renderer, 78, 163, 54, 255);
+  SDL_SetRenderDrawColor(renderer, 150, 136, 105, 255);
   SDL_Rect rect = {
     SCREEN_WIDTH, 
     SCREEN_HEIGHT / 2,
@@ -96,6 +96,7 @@ int main() {
   ImageLoader::loadImage("|", "assets/wall2.png");
   ImageLoader::loadImage("*", "assets/wall4.png");
   ImageLoader::loadImage("g", "assets/wall5.png");
+  ImageLoader::loadImage("p", "assets/sprite1.png");
 
   Raycaster r = { renderer };
   r.load_map("assets/map.txt");
@@ -105,6 +106,7 @@ int main() {
 
   bool running = true;
   bool win = false;
+  bool photo = false;
   int speed = 10;
   while(running) {
     SDL_Event event;
@@ -147,6 +149,11 @@ int main() {
             }
             break;
           }
+          case SDLK_SPACE:{
+            if (!photo) {
+                photo = true;
+            }
+          }
         }
       }
 
@@ -159,12 +166,17 @@ int main() {
 
     clear();
     draw_floor();
+    int size = 128;
 
     if (win) {
       showWinScreen();  // Show the win screen
       break;            // Break out of the loop to stop updating the game
     } else {
       r.render();
+      r.render_player();
+      if (photo) {
+        //animation here
+      }
     }
 
     frameCount++;
