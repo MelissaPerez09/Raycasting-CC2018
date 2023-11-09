@@ -108,6 +108,9 @@ int main() {
   bool win = false;
   bool photo = false;
   int speed = 10;
+  Uint32 animationStartTime = 0;
+  Uint32 animationDuration = 1000;
+
   while(running) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -149,11 +152,14 @@ int main() {
             }
             break;
           }
-          case SDLK_SPACE:{
-            if (!photo) {
-                photo = true;
-            }
+          case SDLK_SPACE: {
+          if (!photo) {
+            photo = true;
+            animationStartTime = SDL_GetTicks(); // Start the animation timer
+            playSoundEffect();
           }
+          break;
+        }
         }
       }
 
@@ -175,7 +181,16 @@ int main() {
       r.render();
       r.render_player();
       if (photo) {
-        //animation here
+        Uint32 currentTime = SDL_GetTicks();
+        if (currentTime - animationStartTime >= animationDuration) {
+          photo = false;
+          playSoundEffect();
+        }
+        if (currentTime - animationStartTime < animationDuration) {
+          ImageLoader::loadImage("p", "assets/sprite2.png");
+        } else {
+          ImageLoader::loadImage("p", "assets/sprite1.png");
+        }
       }
     }
 
