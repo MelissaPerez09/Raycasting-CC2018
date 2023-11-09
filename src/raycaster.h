@@ -16,8 +16,6 @@
 const Color B = {0, 0, 0};
 const Color W = {255, 255, 255};
 
-//const int WIDTH = 8;
-//const int HEIGHT = 10;
 const int WIDTH = 16;
 const int HEIGHT = 11;
 const int BLOCK = 50;

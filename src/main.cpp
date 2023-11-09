@@ -95,7 +95,10 @@ int main() {
   ImageLoader::loadImage("-", "assets/wall1.png");
   ImageLoader::loadImage("|", "assets/wall2.png");
   ImageLoader::loadImage("*", "assets/wall4.png");
-  ImageLoader::loadImage("g", "assets/wall5.png");
+  ImageLoader::loadImage("=", "assets/wall5.png");
+  ImageLoader::loadImage("/", "assets/wall6.png");
+  ImageLoader::loadImage("!", "assets/wall7.png");
+  ImageLoader::loadImage("g", "assets/wall8.png");
   ImageLoader::loadImage("p", "assets/sprite1.png");
 
   Raycaster r = { renderer };
